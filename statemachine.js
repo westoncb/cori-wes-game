@@ -1,13 +1,10 @@
 class StateMachine {
-  states: null,
-  edges: null,
-  initialState: null,
-  currentState: null,
-
   constructor() {
     this.states = [];
     this.edges = [];
-  },
+    this.initialState = null;
+    this.currentState = null;
+  }
 
   addState(name, enteringStateFunc, leavingStateFunc, initial) {
     var state = {name: name, 
@@ -55,16 +52,20 @@ class StateMachine {
   }
 
   stateWithName(name) {
-    this.states.find(state => return state.name === name);
+    this.states.find(state => {return state.name === name;});
   }
 
   connectStatePair(first, second) {
     var edge = {start: first, dest: second};
 
     first.outgoingEdges.push(edge);
-  },
+  }
+
+  start() {
+    this.reset();
+  }
 
   reset() {
-    this.currentState = this.initialState;
+    this.transition(this.initialState.name);
   }
 }
