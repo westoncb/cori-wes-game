@@ -34,22 +34,22 @@ class CitySelector {
     scene.add(planeMesh);
 
     this.addBuildings(scene);
-    this.addLights(scene);
+    this.addCities(scene);
   }
 
-  addLights(scene) {
+  addCities(scene) {
     for (var i = 0; i < 6; i++) {
-      var xIndex = Math.round(Math.random()*this.xBuildingCount);
-      var zIndex = Math.round(Math.random()*this.zBuildingCount);
+      var xIndex = Math.floor(Math.random()*this.xBuildingCount);
+      var zIndex = Math.floor(Math.random()*this.zBuildingCount);
       var x = this.xForIndex(xIndex);
       var z = this.zForIndex(zIndex);
       var y = this.heightMap[xIndex][zIndex] + 0.5;
 
-      this.addLight(scene, x, y, z);
+      this.addCity(scene, x, y, z);
     }
   }
 
-  addLight(scene, x, y, z) {
+  addCity(scene, x, y, z) {
     var c1 = 0x660000;
     var intensity = 1.0;
     var distance = 30;
@@ -59,6 +59,16 @@ class CitySelector {
     // light1.add( );
     var city = new THREE.Mesh( sphereGeometry, new THREE.MeshStandardMaterial( { color: c1 , metalness: 0, roughness: 0.34} ) );
     city.position.set(x, y, z);
+    city.onMouseEnter = function() {
+      city.material.color.set(0xff0000);
+    }
+    city.onMouseLeave = function() {
+      city.material.color.set(c1);
+    }
+    city.onMouseClick = function() {
+      city.material.color.set(0x00ff00);
+    }
+
     scene.add(city);
   }
 
