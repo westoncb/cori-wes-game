@@ -2,11 +2,16 @@ class Game {
   constructor() {
     this.width = 800;
     this.height = 450;
+    this.mousePos = new THREE.Vector2();
+    this.raycaster = new THREE.Raycaster();
 
     this.citySelector = new CitySelector();
 
     this.initThreeJS();
     this.initStateMachine();
+
+    this.container.on('mousemove', this.onMouseMove.bind(this));
+    this.container.on('click', this.onMouseClick.bind(this));
 
     this.animate();
   }
@@ -17,6 +22,9 @@ class Game {
     var container = document.createElement( 'div' );
     container.id = 'threejs-container';
     document.body.appendChild( container );
+    this.container = $('#threejs-container');
+    this.container.css('width', this.width);
+    this.container.css('height', this.height);
 
     this.stats = new Stats();
     container.appendChild( this.stats.dom );
@@ -76,6 +84,70 @@ class Game {
     stateMachine.transition('city_selector');
   }
 
+  onMouseMove(event) {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+
+    var offset = this.container.offset();
+    var canvasX = offset.left;
+    var canvasY = offset.top;
+    var relativeMouseX = event.clientX - canvasX;
+    var relativeMouseY = event.clientY - canvasY;
+    var canvasWidth = this.container.width();
+    var canvasHeight = this.container.height();
+
+    this.mousePos.x = ( relativeMouseX / canvasWidth ) * 2 - 1;
+    this.mousePos.y = - ( relativeMouseY / canvasHeight ) * 2 + 1;
+
+    this.checkForIntersectedObjects();
+  }
+
+  onMouseClick() {
+    this.scene.children.forEach(child => {
+      if (child.hasMouse && child.onMouseClick) {
+        child.onMouseClick();
+      }
+    });
+  }
+
+  checkForIntersectedObjects() {
+    // update the picking ray with the camera and mouse position  
+    this.raycaster.setFromCamera( this.mousePos, this.camera ); 
+
+    // calculate objects intersecting the picking ray
+    var intersects = this.raycaster.intersectObjects( this.scene.children );
+
+    for ( var i = 0; i < intersects.length; i++ ) {
+
+      var object = intersects[ i ].object;
+      if (object.onMouseEnter) {
+        object.onMouseEnter();
+        object.hasMouse = true;
+      }
+    }
+
+    this.scene.children.forEach(child => {
+      var doesNotActuallyHaveMouse = !this.mouseIsOverObject(child, intersects);
+      if (doesNotActuallyHaveMouse && child.hasMouse) {
+        if (child.onMouseLeave) {
+          child.onMouseLeave();
+          child.hasMouse = false;
+        }
+      }
+    });
+  }
+
+  mouseIsOverObject(object, intersections) {
+    
+    //Only check the first intersection object since it's 
+    //the one nearest the camera
+    if (intersections.length > 0) {
+      return intersections[0].object === object;
+    } else {
+      return false;
+    }
+  }
+
   animate() {
     requestAnimationFrame( this.animate.bind(this) );
 
@@ -94,11 +166,8 @@ class Game {
 }
 
 
-
-
-
 $(document).ready(function() {
 
-var game = new Game();
-  
+  var game = new Game();
+
 });
