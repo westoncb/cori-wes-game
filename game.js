@@ -56,7 +56,7 @@ class Game {
     var stateMachine = this.stateMachine;
 
     var enteringCitySelector = function() {
-      self.citySelector.setupScene(self.scene, self.camera);
+      self.citySelector.setupScene(self.scene, self.camera, self.changeCameraTarget.bind(self), self.renderer);
     };
 
     var leavingCitySelector = function() {
@@ -65,12 +65,13 @@ class Game {
 
     stateMachine.addState('city_selector', enteringCitySelector, leavingCitySelector, true);
 
-    var enteringCity = function() {
-      console.log("entering city");
+    var enteringCity = function(data) {
+      self.city = new City();
+      self.city.setupScene(self.scene, self.camera, self.changeCameraTarget.bind(self), self.renderer);      
     }
 
     var leavingCity = function() {
-      console.log("leaving city");
+      self.city.teardownScene(self.scene);
     }
 
     stateMachine.addState('city', enteringCity, leavingCity);
@@ -131,6 +132,15 @@ class Game {
         }
       }
     });
+  }
+
+  changeCameraTarget(newTarget) {
+    // this.cameraTarget.set(newTarget.x, newTarget.y, newTarget.z);
+    if (this.controls) {
+      this.controls.target.set(newTarget.x, newTarget.y, newTarget.z);
+    }
+
+    this.camera.lookAt(newTarget);
   }
 
   mouseIsOverObject(object, intersections) {

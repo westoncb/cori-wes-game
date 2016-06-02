@@ -19,7 +19,7 @@ class StateMachine {
     }
   }
 
-  transition(nextStateName) {
+  transition(nextStateName, transitionData) {
     var nextState = this.stateWithName(nextStateName);
     var currentState = this.currentState;
     var edge = this.edgeForStatePair(currentState, nextState);
@@ -44,7 +44,7 @@ class StateMachine {
 
       var enteringStateFunc = nextState.enteringStateFunc;
       if (enteringStateFunc) {
-        enteringStateFunc();
+        enteringStateFunc(transitionData);
       }
     }
   }
