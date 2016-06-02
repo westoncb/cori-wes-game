@@ -5,9 +5,9 @@ class Game {
     this.mousePos = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster();
 
-    this.citySelector = new CitySelector();
-
     this.initThreeJS();
+    this.stateMachine = new StateMachine();
+    this.citySelector = new CitySelector(this.stateMachine);
     this.initStateMachine();
 
     this.container.on('mousemove', this.onMouseMove.bind(this));
@@ -53,15 +53,14 @@ class Game {
 
   initStateMachine() {
     var self = this;
-    var stateMachine = new StateMachine();
-    this.stateMachine = stateMachine;
+    var stateMachine = this.stateMachine;
 
     var enteringCitySelector = function() {
       self.citySelector.setupScene(self.scene, self.camera);
     };
 
     var leavingCitySelector = function() {
-      console.log("leaving city selector");
+      self.citySelector.teardownScene(self.scene);
     };
 
     stateMachine.addState('city_selector', enteringCitySelector, leavingCitySelector, true);
@@ -79,9 +78,6 @@ class Game {
     stateMachine.connectStatePair('city_selector', 'city');
 
     stateMachine.start();
-
-    stateMachine.transition('city');
-    stateMachine.transition('city_selector');
   }
 
   onMouseMove(event) {

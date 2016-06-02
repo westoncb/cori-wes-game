@@ -1,5 +1,6 @@
 class CitySelector {
-  constructor() {
+  constructor(stateMachine) {
+    this.stateMachine = stateMachine;
     this.width = 90;
     this.depth = 50;
     this.xBuildingCount = 15;
@@ -50,6 +51,8 @@ class CitySelector {
   }
 
   addCity(scene, x, y, z) {
+    var self = this;
+
     var c1 = 0x660000;
     var intensity = 1.0;
     var distance = 30;
@@ -67,6 +70,7 @@ class CitySelector {
     }
     city.onMouseClick = function() {
       city.material.color.set(0x00ff00);
+      self.stateMachine.transition('city');
     }
 
     scene.add(city);
@@ -100,6 +104,8 @@ class CitySelector {
   }
 
   teardownScene(scene) {
-
+    for( var i = scene.children.length - 1; i >= 0; i--){
+      scene.remove(scene.children[i]);
+    }
   }
 }
