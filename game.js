@@ -1,5 +1,8 @@
 class Game {
   constructor() {
+    this.width = 800;
+    this.height = 450;
+
     this.citySelector = new CitySelector();
 
     this.initThreeJS();
@@ -20,15 +23,16 @@ class Game {
 
     this.scene = new THREE.Scene();
 
-    var camera = new THREE.PerspectiveCamera( 45, 800/600, 1, 2000 );
+    var camera = new THREE.PerspectiveCamera( 45, this.width/this.height, 1, 2000 );
     camera.position.set( 0, 100, 100 );
     camera.lookAt(0, 0, 0);
     this.camera = camera;
 
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( 800, 600 );
+    renderer.setSize( this.width, this.height );
     renderer.setClearColor( 0x666666 );
+    renderer.sortObjects = false;
     container.appendChild( renderer.domElement );
     this.renderer = renderer
 

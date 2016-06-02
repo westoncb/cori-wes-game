@@ -13,7 +13,7 @@ class CitySelector {
   }
 
   setupScene(scene, camera) {
-    camera.position.set(0, 90, 70);
+    camera.position.set(0, 75, 50);
 
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
     scene.add( directionalLight );
