@@ -24,7 +24,7 @@ class City {
         texture.minFilter = THREE.LinearFilter;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 4);
+        texture.repeat.set(1, 6);
         
         var material =  new THREE.MeshBasicMaterial({map: texture});
         material.transparent = false;
@@ -39,7 +39,33 @@ class City {
         scene.add(planeMesh);
       });
 
-    
+
+
+
+    // model
+    var onProgress = function ( xhr ) {
+      if ( xhr.lengthComputable ) {
+        var percentComplete = xhr.loaded / xhr.total * 100;
+        // console.log( Math.round(percentComplete, 2) + '% downloaded' );
+      }
+    };
+    var onError = function ( xhr ) { };
+    THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setPath( 'resources/models/building/' );
+    mtlLoader.load( 'edifici_prat.mtl', function( materials ) {
+      materials.preload();
+      var objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials( materials );
+      objLoader.setPath( 'resources/models/building/' );
+      objLoader.load( 'edifici_prat.obj', function ( object ) {
+
+        object.scale.set(6, 6, 6);
+        object.rotation.set(0, -Math.PI/2, 0);
+        object.position.set(60, 0, 100);
+        scene.add( object );
+      }, onProgress, onError );
+    });
   }
 
   teardownScene(scene) {
