@@ -46,7 +46,7 @@ class Game {
 
     var controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.enableDamping = true;
-    controls.dampingFactor = 0.5;
+    controls.dampingFactor = 1;
     controls.enableZoom = true;
     this.controls = controls;
   }
