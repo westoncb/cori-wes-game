@@ -120,7 +120,7 @@ class Game {
     for ( var i = 0; i < intersects.length; i++ ) {
 
       var object = intersects[ i ].object;
-      if (object.onMouseEnter) {
+      if (object.onMouseEnter && !object.hasMouse) {
         object.onMouseEnter();
         object.hasMouse = true;
       }
