@@ -8,13 +8,16 @@ class CitySelector {
     this.buildingWidth = this.width / this.xBuildingCount;
     this.buildingDepth = this.depth / this.zBuildingCount;
     this.heightMap = [];
+    this.cityCount = 0;
     for(var i = 0; i < this.xBuildingCount; i++) {
       this.heightMap.push([]);
     }
   }
 
-  setupScene(scene, camera) {
+  setupScene(scene, camera, changeCameraTargetFunc, renderer) {
     camera.position.set(0, 75, 50);
+
+    renderer.setClearColor(0x666666);
 
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
     scene.add( directionalLight );
@@ -26,13 +29,6 @@ class CitySelector {
 
     var ambientLight = new THREE.AmbientLight( 0xcccccc );
     scene.add( ambientLight );
-
-    var planeGeometry = new THREE.PlaneGeometry(this.width, this.depth);
-    planeGeometry.rotateX(-Math.PI/2);
-    var planeMesh = new THREE.Mesh(planeGeometry, new THREE.MeshStandardMaterial({color: 0xFF0000, side: THREE.DoubleSide}));
-    planeMesh.position.set(0, 0, 0);
-    
-    scene.add(planeMesh);
 
     this.addBuildings(scene);
     this.addCities(scene);
@@ -61,6 +57,7 @@ class CitySelector {
     var sphereGeometry = new THREE.SphereBufferGeometry(2, 15, 15);
     // light1.add( );
     var city = new THREE.Mesh( sphereGeometry, new THREE.MeshStandardMaterial( { color: c1 , metalness: 0, roughness: 0.34} ) );
+    city.name = "city" + (++this.cityCount);
     city.position.set(x, y, z);
     city.onMouseEnter = function() {
       city.material.color.set(0xff0000);
@@ -70,7 +67,7 @@ class CitySelector {
     }
     city.onMouseClick = function() {
       city.material.color.set(0x00ff00);
-      self.stateMachine.transition('city');
+      self.stateMachine.transition('city', {name: city.name});
     }
 
     scene.add(city);
