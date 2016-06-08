@@ -74,7 +74,7 @@ class Game {
       self.city.teardownScene(self.scene);
     }
 
-    stateMachine.addState('city', enteringCity, leavingCity);
+    stateMachine.addState('city', enteringCity, leavingCity, false);
 
     stateMachine.connectStatePair('city_selector', 'city');
 
